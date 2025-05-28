@@ -2931,3 +2931,110 @@ Please provide actionable, detailed recommendations that align with the complexi
                 return deliverables[taskType] || deliverables['一般'];
             }
 </html>
+        }
+
+        // グローバル変数として設定
+        const taskManager = new TaskManager();
+
+        // グローバル関数
+        function toggleTaskInput() {
+            taskManager.toggleTaskInput();
+        }
+
+        function addTask() {
+            taskManager.addTask();
+        }
+
+        function deleteTask(id) {
+            taskManager.deleteTask(id);
+        }
+
+        function toggleTask(id) {
+            taskManager.toggleTask(id);
+        }
+
+        function editTask(id) {
+            taskManager.editTask(id);
+        }
+
+        function filterTasks(filter) {
+            taskManager.filterTasks(filter);
+        }
+
+        function showProject(project) {
+            taskManager.showProject(project);
+        }
+
+        function addClient() {
+            taskManager.addClient();
+        }
+
+        function deleteClient(id) {
+            taskManager.deleteClient(id);
+        }
+
+        function editClient(id) {
+            taskManager.editClient(id);
+        }
+
+        function generatePrompt() {
+            const title = document.getElementById('taskTitle').value.trim();
+            const description = document.getElementById('taskDescription').value.trim();
+            const aiTool = document.getElementById('aiTool').value;
+            
+            if (\!title || \!aiTool) {
+                if (\!title) alert('Please enter a task title');
+                if (\!aiTool) alert('Please select an AI tool');
+                return;
+            }
+            
+            const prompt = taskManager.generateBusinessPrompt(title, description, aiTool);
+            document.getElementById('generatedPrompt').value = prompt;
+            document.getElementById('promptOutput').style.display = 'block';
+            
+            document.getElementById('promptOutput').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function copyPrompt() {
+            const promptText = document.getElementById('generatedPrompt');
+            promptText.select();
+            promptText.setSelectionRange(0, 99999);
+            
+            try {
+                document.execCommand('copy');
+                alert('✅ Prompt copied to clipboard\!');
+            } catch (err) {
+                alert('❌ Failed to copy prompt. Please copy manually.');
+            }
+        }
+
+        function toggleEmailHelper() {
+            taskManager.toggleEmailHelper();
+        }
+
+        function generateEmailResponse() {
+            taskManager.generateEmailResponse();
+        }
+
+        function copyEmailResponse() {
+            taskManager.copyEmailResponse();
+        }
+
+        function createTaskFromEmail() {
+            taskManager.createTaskFromEmail();
+        }
+
+        function summarizeEmail() {
+            taskManager.summarizeEmail();
+        }
+
+        function suggestResponse() {
+            taskManager.suggestResponse();
+        }
+
+        function handleFileSelection() {
+            taskManager.handleFileSelection();
+        }
+    </script>
+</body>
+</html>
