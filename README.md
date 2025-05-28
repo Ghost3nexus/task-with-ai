@@ -2,7 +2,7 @@
 
 > **Craft with Pride** - Professional Task Management System
 
-A minimalist, AI-powered task management application inspired by NEIGHBORHOOD's design philosophy. Clean, functional, and intelligent.
+A minimalist, AI-powered task management application with clean, functional, and intelligent design.
 
 ## ✨ Features
 
@@ -18,7 +18,7 @@ A minimalist, AI-powered task management application inspired by NEIGHBORHOOD's 
 - **File Attachments** - Support for documents, images, and presentations (up to 5MB)
 - **Progress Tracking** - Visual progress indicators and completion statistics
 
-### 🎨 **NEIGHBORHOOD-Inspired Design**
+### 🎨 **Clean Minimal Design**
 - **Minimalist Aesthetic** - Clean black and white design language
 - **Helvetica Typography** - Professional, readable font system
 - **Grid-Based Layout** - Organized, catalog-style presentation
@@ -105,6 +105,6 @@ If you encounter any issues or have suggestions, please [open an issue](https://
 
 ---
 
-**Made with ❤️ inspired by NEIGHBORHOOD's "Craft with Pride" philosophy**
+**Made with ❤️ following "Craft with Pride" philosophy**
 
 *Clean design. Intelligent features. Professional results.*
