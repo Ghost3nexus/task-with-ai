@@ -2395,7 +2395,7 @@ Please provide detailed, actionable insights with clear implementation steps.`
                 };
                 
                 const toolPrompts = prompts[aiTool] || prompts.chatgpt;
-                // Generate dynamic prompt based on analysis\n                return this.generateDynamicPrompt(title, description, taskType, complexity, urgency, domain, aiTool);
+                // Temporary simple prompt generation\n                return `## 🎯 ${title}\n\n**Task Description:**\n${description || 'No description provided'}\n\n**AI Tool:** ${aiTool}\n\nPlease provide comprehensive guidance for completing this task effectively.`;
             }
 
             generateDynamicPrompt(title, description, taskType, complexity, urgency, domain, aiTool) {
