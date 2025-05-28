@@ -494,6 +494,131 @@
                 display: none;
             }
         }
+
+        /* Mobile Responsive Design */
+        @media screen and (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 200px 1fr 250px;
+            }
+            .sidebar {
+                padding: 20px 15px;
+            }
+            .task-area {
+                padding: 20px;
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            .header {
+                padding: 20px 10px;
+                position: relative;
+            }
+            .header h1 {
+                font-size: 1.8em;
+            }
+            .main-content {
+                display: block;
+                min-height: auto;
+            }
+            .sidebar {
+                padding: 15px;
+                margin-bottom: 1px;
+                border-right: none;
+                border-bottom: 1px solid #e0e0e0;
+            }
+            .task-area {
+                padding: 15px;
+            }
+            .info-panel {
+                padding: 15px;
+                margin-top: 1px;
+            }
+            .input-row {
+                flex-direction: column;
+            }
+            .input-group {
+                margin-bottom: 15px;
+            }
+            .task-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: stretch;
+            }
+            .add-task-btn {
+                width: 100%;
+                padding: 12px;
+                font-size: 16px;
+            }
+            .btn {
+                padding: 12px 16px;
+                font-size: 16px;
+                margin: 5px 0;
+            }
+            .task-item {
+                padding: 15px;
+                margin-bottom: 10px;
+            }
+            .task-meta {
+                flex-direction: column;
+                gap: 5px;
+            }
+            button, .add-task-btn, .btn {
+                min-height: 44px;
+                touch-action: manipulation;
+            }
+            input, textarea, select {
+                font-size: 16px;
+                padding: 12px;
+                width: 100%;
+                -webkit-appearance: none;
+                border-radius: 0;
+            }
+            .email-helper {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 1000;
+                padding: 10px;
+                overflow-y: auto;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .header h1 {
+                font-size: 1.5em;
+                letter-spacing: 1px;
+            }
+            .header p {
+                font-size: 0.8em;
+            }
+            .sidebar h3 {
+                font-size: 0.8em;
+            }
+            .task-area {
+                padding: 10px;
+            }
+            .info-panel {
+                padding: 10px;
+            }
+            .task-item {
+                padding: 12px;
+            }
+            .task-title {
+                font-size: 1em;
+            }
+            .input-group label {
+                font-size: 0.9em;
+            }
+            .btn, .add-task-btn {
+                font-size: 14px;
+                padding: 10px 12px;
+            }
+        }
     </style>
 </head>
 <body>
