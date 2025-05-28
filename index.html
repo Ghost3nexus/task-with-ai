@@ -641,6 +641,17 @@
                     <div class="input-group">
                         <label>Received Email Content</label>
                         <textarea id="receivedEmail" rows="4" placeholder="Paste the email content you received here..."></textarea>
+                        <div style="margin-top: 8px; display: flex; gap: 10px;">
+                            <button type="button" class="btn btn-ai" onclick="summarizeEmail()" style="padding: 6px 12px; font-size: 0.8em;">📋 Summarize Email</button>
+                            <button type="button" class="btn btn-ai" onclick="suggestResponse()" style="padding: 6px 12px; font-size: 0.8em;">💡 Suggest Response</button>
+                        </div>
+                    </div>
+
+                    <div class="input-group" id="emailSummary" style="display: none;">
+                        <label>📋 Email Summary & Analysis</label>
+                        <div id="summaryContent" style="background: #f8f8f8; border: 1px solid #e0e0e0; padding: 15px; border-radius: 4px; margin-bottom: 10px;">
+                            <!-- Summary content will be inserted here -->
+                        </div>
                     </div>
 
                     <div class="input-row">
@@ -675,6 +686,13 @@
                                 <option value="high">High</option>
                                 <option value="urgent">Urgent</option>
                             </select>
+                        </div>
+                    </div>
+
+                    <div class="input-group" id="responseSuggestions" style="display: none;">
+                        <label>💡 AI Response Suggestions</label>
+                        <div id="suggestionsContent" style="background: #f8f8f8; border: 1px solid #e0e0e0; padding: 15px; border-radius: 4px; margin-bottom: 10px;">
+                            <!-- Suggestions content will be inserted here -->
                         </div>
                     </div>
 
@@ -1305,6 +1323,8 @@
                 document.getElementById('emailPriority').value = 'normal';
                 document.getElementById('emailRequirements').value = '';
                 document.getElementById('emailOutput').style.display = 'none';
+                document.getElementById('emailSummary').style.display = 'none';
+                document.getElementById('responseSuggestions').style.display = 'none';
             }
 
             generateEmailResponse() {
@@ -1516,6 +1536,418 @@ ${closing}
                 const date = new Date();
                 date.setDate(date.getDate() + daysFromNow);
                 return date.toISOString().split('T')[0];
+            }
+
+            // Email Analysis Functions
+            summarizeEmail() {
+                const emailContent = document.getElementById('receivedEmail').value.trim();
+                
+                if (!emailContent) {
+                    alert('Please paste the email content first');
+                    return;
+                }
+                
+                const analysis = this.analyzeEmailContent(emailContent);
+                const summaryHtml = this.generateSummaryHTML(analysis);
+                
+                document.getElementById('summaryContent').innerHTML = summaryHtml;
+                document.getElementById('emailSummary').style.display = 'block';
+                document.getElementById('emailSummary').scrollIntoView({ behavior: 'smooth' });
+            }
+
+            suggestResponse() {
+                const emailContent = document.getElementById('receivedEmail').value.trim();
+                
+                if (!emailContent) {
+                    alert('Please paste the email content first');
+                    return;
+                }
+                
+                const analysis = this.analyzeEmailContent(emailContent);
+                const suggestions = this.generateResponseSuggestions(analysis);
+                const suggestionsHtml = this.generateSuggestionsHTML(suggestions);
+                
+                document.getElementById('suggestionsContent').innerHTML = suggestionsHtml;
+                document.getElementById('responseSuggestions').style.display = 'block';
+                document.getElementById('responseSuggestions').scrollIntoView({ behavior: 'smooth' });
+            }
+
+            analyzeEmailContent(emailContent) {
+                const text = emailContent.toLowerCase();
+                
+                // Extract key information
+                const analysis = {
+                    originalText: emailContent,
+                    keyWords: this.extractKeywords(text),
+                    sentiment: this.analyzeSentiment(text),
+                    urgency: this.analyzeUrgency(text),
+                    category: this.categorizeEmail(text),
+                    actionItems: this.extractActionItems(text),
+                    questions: this.extractQuestions(emailContent),
+                    tone: this.analyzeTone(text),
+                    estimatedLength: emailContent.length,
+                    wordCount: emailContent.split(/\s+/).length
+                };
+                
+                return analysis;
+            }
+
+            extractKeywords(text) {
+                const stopWords = ['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'from', 'up', 'about', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'between', 'among', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might', 'must', 'can', 'this', 'that', 'these', 'those', 'i', 'you', 'he', 'she', 'it', 'we', 'they', 'me', 'him', 'her', 'us', 'them'];
+                
+                const words = text.split(/\W+/).filter(word => 
+                    word.length > 3 && 
+                    !stopWords.includes(word) && 
+                    !word.match(/^\d+$/)
+                );
+                
+                const frequency = {};
+                words.forEach(word => {
+                    frequency[word] = (frequency[word] || 0) + 1;
+                });
+                
+                return Object.entries(frequency)
+                    .sort(([,a], [,b]) => b - a)
+                    .slice(0, 10)
+                    .map(([word]) => word);
+            }
+
+            analyzeSentiment(text) {
+                const positiveWords = ['good', 'great', 'excellent', 'amazing', 'wonderful', 'fantastic', 'perfect', 'love', 'like', 'appreciate', 'thank', 'thanks', 'grateful', 'pleased', 'happy', 'excited', 'looking forward', 'opportunity', 'success', 'congratulations'];
+                const negativeWords = ['bad', 'terrible', 'awful', 'horrible', 'hate', 'dislike', 'disappointed', 'frustrated', 'angry', 'upset', 'problem', 'issue', 'concern', 'worry', 'difficult', 'challenge', 'unfortunately', 'sorry', 'apologize', 'mistake', 'error', 'wrong'];
+                const neutralWords = ['meeting', 'discussion', 'information', 'update', 'report', 'request', 'question', 'confirm', 'schedule', 'plan'];
+                
+                let positiveScore = 0;
+                let negativeScore = 0;
+                let neutralScore = 0;
+                
+                positiveWords.forEach(word => {
+                    if (text.includes(word)) positiveScore++;
+                });
+                
+                negativeWords.forEach(word => {
+                    if (text.includes(word)) negativeScore++;
+                });
+                
+                neutralWords.forEach(word => {
+                    if (text.includes(word)) neutralScore++;
+                });
+                
+                if (positiveScore > negativeScore && positiveScore > neutralScore) return 'Positive';
+                if (negativeScore > positiveScore && negativeScore > neutralScore) return 'Negative';
+                if (neutralScore > 0) return 'Neutral';
+                return 'Neutral';
+            }
+
+            analyzeUrgency(text) {
+                const urgentKeywords = ['urgent', 'asap', 'immediately', 'emergency', 'deadline', 'today', 'tonight', 'rush', 'critical', 'important', 'priority', 'quick', 'fast'];
+                const urgentPhrases = ['as soon as possible', 'by end of day', 'time sensitive', 'high priority'];
+                
+                let urgencyScore = 0;
+                
+                urgentKeywords.forEach(keyword => {
+                    if (text.includes(keyword)) urgencyScore += 2;
+                });
+                
+                urgentPhrases.forEach(phrase => {
+                    if (text.includes(phrase)) urgencyScore += 3;
+                });
+                
+                if (urgencyScore >= 5) return 'High';
+                if (urgencyScore >= 2) return 'Medium';
+                return 'Low';
+            }
+
+            categorizeEmail(text) {
+                const categories = {
+                    'Meeting Request': ['meeting', 'schedule', 'appointment', 'call', 'discuss', 'talk', 'conference'],
+                    'Proposal/Quote': ['proposal', 'quote', 'estimate', 'pricing', 'cost', 'budget', 'offer'],
+                    'Follow-up': ['follow up', 'checking in', 'status update', 'progress', 'how are things'],
+                    'Information Request': ['information', 'details', 'clarification', 'explain', 'tell me', 'need to know'],
+                    'Complaint/Issue': ['problem', 'issue', 'concern', 'complaint', 'not working', 'error', 'wrong'],
+                    'Thank You': ['thank you', 'thanks', 'appreciate', 'grateful', 'acknowledgment'],
+                    'Project Update': ['update', 'progress', 'status', 'report', 'milestone', 'completion'],
+                    'General Inquiry': ['question', 'inquiry', 'wondering', 'curious', 'would like to know']
+                };
+                
+                let maxScore = 0;
+                let detectedCategory = 'General Communication';
+                
+                for (const [category, keywords] of Object.entries(categories)) {
+                    let score = 0;
+                    keywords.forEach(keyword => {
+                        if (text.includes(keyword)) score++;
+                    });
+                    
+                    if (score > maxScore) {
+                        maxScore = score;
+                        detectedCategory = category;
+                    }
+                }
+                
+                return detectedCategory;
+            }
+
+            extractActionItems(text) {
+                const actionPatterns = [
+                    /please\s+([^.!?]+)/gi,
+                    /could\s+you\s+([^.!?]+)/gi,
+                    /would\s+you\s+([^.!?]+)/gi,
+                    /can\s+you\s+([^.!?]+)/gi,
+                    /need\s+to\s+([^.!?]+)/gi,
+                    /let\s+me\s+know\s+([^.!?]+)/gi
+                ];
+                
+                const actions = [];
+                actionPatterns.forEach(pattern => {
+                    const matches = text.match(pattern);
+                    if (matches) {
+                        matches.forEach(match => {
+                            const cleanAction = match.replace(/^(please|could you|would you|can you|need to|let me know)\s*/i, '')
+                                .trim()
+                                .replace(/[.!?]+$/, '');
+                            if (cleanAction.length > 5 && cleanAction.length < 100) {
+                                actions.push(cleanAction);
+                            }
+                        });
+                    }
+                });
+                
+                return [...new Set(actions)].slice(0, 5); // Remove duplicates, max 5 items
+            }
+
+            extractQuestions(text) {
+                const questions = text.split(/[.!]/)
+                    .filter(sentence => sentence.includes('?'))
+                    .map(q => q.trim())
+                    .filter(q => q.length > 10)
+                    .slice(0, 5);
+                
+                return questions;
+            }
+
+            analyzeTone(text) {
+                const formalIndicators = ['dear', 'sincerely', 'regards', 'respectfully', 'please find attached', 'i would like to', 'we appreciate'];
+                const casualIndicators = ['hi', 'hey', 'thanks', 'hope you\'re well', 'let me know', 'talk soon', 'cheers'];
+                const urgentIndicators = ['urgent', 'asap', 'immediately', 'deadline', 'rush'];
+                
+                let formalScore = 0;
+                let casualScore = 0;
+                let urgentScore = 0;
+                
+                formalIndicators.forEach(indicator => {
+                    if (text.includes(indicator)) formalScore++;
+                });
+                
+                casualIndicators.forEach(indicator => {
+                    if (text.includes(indicator)) casualScore++;
+                });
+                
+                urgentIndicators.forEach(indicator => {
+                    if (text.includes(indicator)) urgentScore++;
+                });
+                
+                if (urgentScore >= 2) return 'Urgent';
+                if (formalScore > casualScore) return 'Formal';
+                if (casualScore > formalScore) return 'Casual';
+                return 'Neutral';
+            }
+
+            generateSummaryHTML(analysis) {
+                return `
+                    <div style="margin-bottom: 15px;">
+                        <h4 style="color: #000000; margin-bottom: 10px; font-size: 1em; text-transform: uppercase; letter-spacing: 1px;">📊 Email Analysis</h4>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 15px;">
+                            <div style="background: #ffffff; padding: 10px; border: 1px solid #e0e0e0; text-align: center;">
+                                <div style="font-weight: bold; color: #000000;">${analysis.category}</div>
+                                <div style="font-size: 0.8em; color: #666666;">Category</div>
+                            </div>
+                            <div style="background: #ffffff; padding: 10px; border: 1px solid #e0e0e0; text-align: center;">
+                                <div style="font-weight: bold; color: #000000;">${analysis.sentiment}</div>
+                                <div style="font-size: 0.8em; color: #666666;">Sentiment</div>
+                            </div>
+                            <div style="background: #ffffff; padding: 10px; border: 1px solid #e0e0e0; text-align: center;">
+                                <div style="font-weight: bold; color: #000000;">${analysis.urgency}</div>
+                                <div style="font-size: 0.8em; color: #666666;">Urgency</div>
+                            </div>
+                            <div style="background: #ffffff; padding: 10px; border: 1px solid #e0e0e0; text-align: center;">
+                                <div style="font-weight: bold; color: #000000;">${analysis.tone}</div>
+                                <div style="font-size: 0.8em; color: #666666;">Tone</div>
+                            </div>
+                        </div>
+                        
+                        ${analysis.keyWords.length > 0 ? `
+                            <div style="margin-bottom: 10px;">
+                                <strong>🏷️ Key Topics:</strong> ${analysis.keyWords.slice(0, 5).join(', ')}
+                            </div>
+                        ` : ''}
+                        
+                        ${analysis.actionItems.length > 0 ? `
+                            <div style="margin-bottom: 10px;">
+                                <strong>✅ Action Items:</strong>
+                                <ul style="margin-left: 20px; margin-top: 5px;">
+                                    ${analysis.actionItems.map(item => `<li>${item}</li>`).join('')}
+                                </ul>
+                            </div>
+                        ` : ''}
+                        
+                        ${analysis.questions.length > 0 ? `
+                            <div style="margin-bottom: 10px;">
+                                <strong>❓ Questions Asked:</strong>
+                                <ul style="margin-left: 20px; margin-top: 5px;">
+                                    ${analysis.questions.map(q => `<li>${q}</li>`).join('')}
+                                </ul>
+                            </div>
+                        ` : ''}
+                        
+                        <div style="font-size: 0.8em; color: #666666; margin-top: 10px;">
+                            📊 ${analysis.wordCount} words • ${Math.ceil(analysis.wordCount / 200)} min read
+                        </div>
+                    </div>
+                `;
+            }
+
+            generateResponseSuggestions(analysis) {
+                const suggestions = {
+                    responseType: this.suggestResponseType(analysis),
+                    tone: this.suggestTone(analysis),
+                    priority: this.suggestPriority(analysis),
+                    keyPoints: this.suggestKeyPoints(analysis),
+                    structure: this.suggestStructure(analysis)
+                };
+                
+                return suggestions;
+            }
+
+            suggestResponseType(analysis) {
+                const typeMapping = {
+                    'Meeting Request': 'meeting',
+                    'Proposal/Quote': 'proposal',
+                    'Follow-up': 'followup',
+                    'Information Request': 'information',
+                    'Complaint/Issue': 'apology',
+                    'Thank You': 'thanks',
+                    'Project Update': 'confirmation',
+                    'General Inquiry': 'information'
+                };
+                
+                return typeMapping[analysis.category] || 'information';
+            }
+
+            suggestTone(analysis) {
+                if (analysis.urgency === 'High') return 'urgent';
+                if (analysis.tone === 'Formal') return 'formal';
+                if (analysis.tone === 'Casual') return 'friendly';
+                return 'formal';
+            }
+
+            suggestPriority(analysis) {
+                if (analysis.urgency === 'High') return 'urgent';
+                if (analysis.urgency === 'Medium') return 'high';
+                return 'normal';
+            }
+
+            suggestKeyPoints(analysis) {
+                const points = [];
+                
+                if (analysis.actionItems.length > 0) {
+                    points.push(`Address the requested actions: ${analysis.actionItems.slice(0, 2).join(', ')}`);
+                }
+                
+                if (analysis.questions.length > 0) {
+                    points.push(`Answer the questions asked in the email`);
+                }
+                
+                if (analysis.sentiment === 'Negative') {
+                    points.push('Acknowledge concerns and provide solutions');
+                }
+                
+                if (analysis.sentiment === 'Positive') {
+                    points.push('Maintain the positive tone and build on it');
+                }
+                
+                if (analysis.category === 'Meeting Request') {
+                    points.push('Provide available time slots and meeting preferences');
+                }
+                
+                return points.slice(0, 4);
+            }
+
+            suggestStructure(analysis) {
+                const structure = ['Opening greeting'];
+                
+                if (analysis.sentiment === 'Positive') {
+                    structure.push('Thank them for their email');
+                } else if (analysis.sentiment === 'Negative') {
+                    structure.push('Acknowledge their concerns');
+                }
+                
+                if (analysis.actionItems.length > 0) {
+                    structure.push('Address each action item');
+                }
+                
+                if (analysis.questions.length > 0) {
+                    structure.push('Answer their questions');
+                }
+                
+                structure.push('Next steps or call to action');
+                structure.push('Professional closing');
+                
+                return structure;
+            }
+
+            generateSuggestionsHTML(suggestions) {
+                return `
+                    <div style="margin-bottom: 15px;">
+                        <h4 style="color: #000000; margin-bottom: 10px; font-size: 1em; text-transform: uppercase; letter-spacing: 1px;">💡 AI Response Recommendations</h4>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 15px;">
+                            <div style="background: #ffffff; padding: 10px; border: 1px solid #e0e0e0; text-align: center;">
+                                <div style="font-weight: bold; color: #000000;">${this.getEmailTypeLabel(suggestions.responseType)}</div>
+                                <div style="font-size: 0.8em; color: #666666;">Suggested Type</div>
+                                <button onclick="document.getElementById('emailType').value='${suggestions.responseType}'" style="margin-top: 5px; padding: 2px 6px; font-size: 0.7em; background: #000000; color: #ffffff; border: none; cursor: pointer;">Apply</button>
+                            </div>
+                            <div style="background: #ffffff; padding: 10px; border: 1px solid #e0e0e0; text-align: center;">
+                                <div style="font-weight: bold; color: #000000;">${suggestions.tone.charAt(0).toUpperCase() + suggestions.tone.slice(1)}</div>
+                                <div style="font-size: 0.8em; color: #666666;">Suggested Tone</div>
+                                <button onclick="document.getElementById('emailTone').value='${suggestions.tone}'" style="margin-top: 5px; padding: 2px 6px; font-size: 0.7em; background: #000000; color: #ffffff; border: none; cursor: pointer;">Apply</button>
+                            </div>
+                            <div style="background: #ffffff; padding: 10px; border: 1px solid #e0e0e0; text-align: center;">
+                                <div style="font-weight: bold; color: #000000;">${suggestions.priority.charAt(0).toUpperCase() + suggestions.priority.slice(1)}</div>
+                                <div style="font-size: 0.8em; color: #666666;">Suggested Priority</div>
+                                <button onclick="document.getElementById('emailPriority').value='${suggestions.priority}'" style="margin-top: 5px; padding: 2px 6px; font-size: 0.7em; background: #000000; color: #ffffff; border: none; cursor: pointer;">Apply</button>
+                            </div>
+                        </div>
+                        
+                        ${suggestions.keyPoints.length > 0 ? `
+                            <div style="margin-bottom: 10px;">
+                                <strong>🎯 Key Points to Address:</strong>
+                                <ul style="margin-left: 20px; margin-top: 5px;">
+                                    ${suggestions.keyPoints.map(point => `<li>${point}</li>`).join('')}
+                                </ul>
+                            </div>
+                        ` : ''}
+                        
+                        <div style="margin-bottom: 10px;">
+                            <strong>📝 Suggested Structure:</strong>
+                            <ol style="margin-left: 20px; margin-top: 5px;">
+                                ${suggestions.structure.map(step => `<li>${step}</li>`).join('')}
+                            </ol>
+                        </div>
+                        
+                        <div style="text-align: center; margin-top: 15px;">
+                            <button onclick="taskManager.applyAllSuggestions('${suggestions.responseType}', '${suggestions.tone}', '${suggestions.priority}')" style="padding: 8px 16px; background: #000000; color: #ffffff; border: none; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;">Apply All Suggestions</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            applyAllSuggestions(responseType, tone, priority) {
+                document.getElementById('emailType').value = responseType;
+                document.getElementById('emailTone').value = tone;
+                document.getElementById('emailPriority').value = priority;
+                alert('✅ All suggestions applied! You can now generate the response.');
             }
 
             // AI機能：タスク分析とAIツール推奨
@@ -2155,6 +2587,14 @@ Please provide detailed, actionable insights with clear implementation steps.`
 
         function createTaskFromEmail() {
             taskManager.createTaskFromEmail();
+        }
+
+        function summarizeEmail() {
+            taskManager.summarizeEmail();
+        }
+
+        function suggestResponse() {
+            taskManager.suggestResponse();
         }
 
         function exportTasks() {
