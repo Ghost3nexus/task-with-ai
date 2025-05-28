@@ -2235,6 +2235,37 @@ ${closing}
                 return { hours, display };
             }
 
+
+            detectUrgency(text) {
+                const urgentKeywords = ['緊急', '急ぎ', 'urgent', 'asap', '今日', 'today', '明日', 'tomorrow', 'deadline'];
+                const normalKeywords = ['来週', 'next week', '来月', 'next month'];
+                
+                const urgentCount = urgentKeywords.filter(keyword => text.includes(keyword)).length;
+                const normalCount = normalKeywords.filter(keyword => text.includes(keyword)).length;
+                
+                if (urgentCount > 0) return '緊急';
+                if (normalCount > 0) return '通常';
+                return '普通';
+            }
+
+            detectDomain(text) {
+                const domains = {
+                    'IT・技術': ['システム', 'system', 'アプリ', 'app', 'web', 'api', 'データベース', 'database'],
+                    'マーケティング': ['マーケティング', 'marketing', 'sns', '広告', 'ad', 'キャンペーン', 'campaign'],
+                    '営業・セールス': ['営業', 'sales', '提案', 'proposal', 'クライアント', 'client', '商談', '契約'],
+                    '人事・採用': ['人事', 'hr', '採用', 'recruit', '面接', 'interview', '研修', 'training'],
+                    '経理・財務': ['経理', 'accounting', '財務', 'finance', '予算', 'budget', '会計', '決算'],
+                    '企画・戦略': ['企画', 'planning', '戦略', 'strategy', '事業', 'business', '新規', 'new'],
+                    'デザイン・クリエイティブ': ['デザイン', 'design', 'ui', 'ux', 'ロゴ', 'logo', 'ブランド', 'brand']
+                };
+                
+                for (const [domain, keywords] of Object.entries(domains)) {
+                    if (keywords.some(keyword => text.includes(keyword))) {
+                        return domain;
+                    }
+                }
+                return '一般業務';
+            }
             recommendAITool(taskType, complexity, urgency) {
                 const recommendations = {
                     'レポート': { tool: 'claude', reason: 'High-quality document creation and detailed data analysis' },
@@ -2260,7 +2291,7 @@ ${closing}
             }
 
             generateBusinessPrompt(title, description, aiTool) {
-                const taskType = this.identifyTaskType(`${title} ${description}`.toLowerCase());
+                // Enhanced task analysis\n                const combinedText = `${title} ${description}`.toLowerCase();\n                const taskType = this.identifyTaskType(combinedText);\n                const complexity = this.analyzeComplexity(combinedText, title, description);\n                const urgency = this.detectUrgency(combinedText);\n                const domain = this.detectDomain(combinedText);
                 
                 const prompts = {
                     chatgpt: {
@@ -2364,7 +2395,76 @@ Please provide detailed, actionable insights with clear implementation steps.`
                 };
                 
                 const toolPrompts = prompts[aiTool] || prompts.chatgpt;
-                return toolPrompts[taskType] || toolPrompts.default;
+                // Generate dynamic prompt based on analysis\n                return this.generateDynamicPrompt(title, description, taskType, complexity, urgency, domain, aiTool);
+            }
+
+            generateDynamicPrompt(title, description, taskType, complexity, urgency, domain, aiTool) {
+                const taskEmoji = this.getTaskEmoji(taskType);
+                const complexityLevel = this.getComplexityDescription(complexity);
+                const urgencyIndicator = this.getUrgencyIndicator(urgency);
+                
+                let prompt = `## ${taskEmoji} ${taskType} - ${title}
+
+**📋 Task Analysis:**
+- **Task Type:** ${taskType}
+- **Domain:** ${domain}
+- **Complexity:** ${complexityLevel}
+- **Urgency:** ${urgencyIndicator}
+- **AI Tool:** ${aiTool}
+
+**🎯 Objective:**
+${title}
+
+**📝 Context & Requirements:**
+${description || 'No additional context provided'}
+
+**🚀 Action Request:**
+Based on the task analysis above, please provide comprehensive guidance for this ${taskType.toLowerCase()} task. 
+Focus on:
+
+${this.getTaskSpecificGuidance(taskType, complexity, urgency, domain)}
+
+**💡 Expected Deliverables:**
+${this.getExpectedDeliverables(taskType, complexity)}
+
+**⚡ Priority Level:** ${urgency}
+
+Please provide actionable, detailed recommendations that align with the complexity level and urgency of this task.`;
+
+                return prompt;
+            }
+
+            getTaskEmoji(taskType) {
+                const emojis = {
+                    'レポート': '📊',
+                    'プレゼン': '🎯',
+                    'コーディング': '💻',
+                    'デザイン': '🎨',
+                    'マーケティング': '📢',
+                    '文書作成': '📝',
+                    '会議': '👥',
+                    '企画': '💡',
+                    '一般': '⚡'
+                };
+                return emojis[taskType] || '📋';
+            }
+
+            getComplexityDescription(complexity) {
+                const descriptions = {
+                    '高': 'High complexity - requires detailed analysis and strategic approach',
+                    '中': 'Medium complexity - standard approach with some considerations',
+                    '低': 'Low complexity - straightforward execution'
+                };
+                return descriptions[complexity] || 'Standard complexity';
+            }
+
+            getUrgencyIndicator(urgency) {
+                const indicators = {
+                    '緊急': '🔴 URGENT - Immediate action required',
+                    '通常': '🟡 Normal priority - Standard timeline',
+                    '普通': '🟢 Regular priority - Flexible timeline'
+                };
+                return indicators[urgency] || '🟢 Regular priority';
             }
 
             // Enhanced Data Sharing Functions
@@ -2800,4 +2900,34 @@ Please provide detailed, actionable insights with clear implementation steps.`
         }
     </script>
 </body>
+
+            getTaskSpecificGuidance(taskType, complexity, urgency, domain) {
+                const guidance = {
+                    'レポート': '- Data analysis methodology and visualization techniques\n- Report structure and executive summary creation\n- Key insights identification and recommendation formulation',
+                    'プレゼン': '- Audience analysis and stakeholder mapping\n- Compelling narrative structure and storytelling\n- Visual design principles and engagement strategies',
+                    'コーディング': '- Architecture design and best practices\n- Code optimization and testing strategies\n- Documentation and deployment considerations',
+                    'デザイン': '- User experience research and design principles\n- Visual hierarchy and brand consistency\n- Prototyping and iteration strategies',
+                    'マーケティング': '- Target audience segmentation and persona development\n- Campaign strategy and channel optimization\n- Performance metrics and ROI measurement',
+                    '文書作成': '- Document structure and formatting standards\n- Content clarity and professional tone\n- Review and approval workflow',
+                    '会議': '- Agenda planning and time management\n- Stakeholder preparation and facilitation techniques\n- Action item documentation and follow-up',
+                    '企画': '- Strategic planning and feasibility analysis\n- Resource allocation and timeline development\n- Risk assessment and mitigation strategies',
+                    '一般': '- Task breakdown and prioritization\n- Resource identification and allocation\n- Quality assurance and completion criteria'
+                };
+                return guidance[taskType] || guidance['一般'];
+            }
+
+            getExpectedDeliverables(taskType, complexity) {
+                const deliverables = {
+                    'レポート': '- Comprehensive analysis report with executive summary\n- Data visualizations and supporting charts\n- Actionable recommendations with implementation roadmap',
+                    'プレゼン': '- Professional presentation deck with clear narrative\n- Supporting materials and speaker notes\n- Q&A preparation and key message reinforcement',
+                    'コーディング': '- Clean, documented, and tested code\n- Technical documentation and user guides\n- Deployment instructions and maintenance guidelines',
+                    'デザイン': '- Final design files and assets\n- Style guide and design system documentation\n- Prototype or mockup for stakeholder review',
+                    'マーケティング': '- Campaign strategy document and creative assets\n- Performance tracking dashboard and KPIs\n- Launch timeline and resource requirements',
+                    '文書作成': '- Polished document with proper formatting\n- Version control and approval documentation\n- Distribution plan and access controls',
+                    '会議': '- Meeting agenda and pre-read materials\n- Detailed meeting minutes and action items\n- Follow-up communication and timeline',
+                    '企画': '- Strategic plan with clear objectives and metrics\n- Implementation roadmap and resource allocation\n- Risk assessment and contingency planning',
+                    '一般': '- Completed task with quality assurance\n- Documentation of process and outcomes\n- Recommendations for future improvements'
+                };
+                return deliverables[taskType] || deliverables['一般'];
+            }
 </html>
