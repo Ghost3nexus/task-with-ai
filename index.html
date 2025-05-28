@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TASK with AI - AI-Powered Task Management</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="TASK with AI - Professional task management with AI recommendations, prompt generation, and file attachments. NEIGHBORHOOD-inspired minimal design.">
+    <meta name="keywords" content="task management, AI, productivity, project management, ChatGPT, Claude, Gemini, Copilot">
+    <meta name="author" content="TASK with AI">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="TASK with AI - AI-Powered Task Management">
+    <meta property="og:description" content="Professional task management with AI recommendations, prompt generation, and file attachments">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://your-username.github.io/task-with-ai/">
+    <meta property="og:image" content="https://your-username.github.io/task-with-ai/og-image.png">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="TASK with AI">
+    <meta name="twitter:description" content="AI-Powered Task Management with NEIGHBORHOOD-inspired design">
+    <meta name="twitter:image" content="https://your-username.github.io/task-with-ai/twitter-image.png">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            background: #ffffff;
+            color: #000000;
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px 20px;
+            background: #000000;
+            color: #ffffff;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            font-weight: normal;
+            color: #ffffff;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .header p {
+            font-size: 0.9em;
+            color: #cccccc;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 250px 1fr 300px;
+            gap: 1px;
+            background: #f5f5f5;
+            min-height: calc(100vh - 200px);
+        }
+
+        .sidebar {
+            background: #ffffff;
+            padding: 30px 20px;
+            border-right: 1px solid #e0e0e0;
+        }
+
+        .sidebar h3 {
+            color: #000000;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+
+        .task-area {
+            background: #ffffff;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .ai-panel {
+            background: #ffffff;
+            padding: 30px 20px;
+            border-left: 1px solid #e0e0e0;
+            overflow-y: auto;
+        }
+
+        .ai-panel h3 {
+            color: #000000;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .ai-icon {
+            color: #000000;
+            font-weight: bold;
+            font-size: 1em;
+        }
+
+        .project-list {
+            list-style: none;
+        }
+
+        .project-item {
+            padding: 15px 0;
+            margin: 0;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9em;
+            color: #666666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .project-item:hover {
+            color: #000000;
+            background: #f8f8f8;
+        }
+
+        .project-item.active {
+            color: #000000;
+            font-weight: bold;
+            background: #f0f0f0;
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .task-header h2 {
+            color: #000000;
+            font-size: 1.5em;
+            font-weight: normal;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .add-task-btn {
+            background: #000000;
+            color: #ffffff;
+            border: none;
+            padding: 12px 24px;
+            cursor: pointer;
+            font-weight: normal;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s ease;
+            font-size: 0.8em;
+        }
+
+        .add-task-btn:hover {
+            background: #333333;
+        }
+
+        .task-input-area {
+            background: #f8f8f8;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid #e0e0e0;
+            display: none;
+        }
+
+        .task-input-area.active {
+            display: block;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #000000;
+            font-weight: bold;
+            font-size: 0.8em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .input-group input,
+        .input-group select,
+        .input-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cccccc;
+            background: #ffffff;
+            color: #000000;
+            font-size: 14px;
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            transition: border-color 0.2s ease;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus,
+        .input-group textarea:focus {
+            outline: none;
+            border-color: #000000;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: 1px solid #000000;
+            cursor: pointer;
+            font-weight: normal;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s ease;
+            font-size: 0.8em;
+            background: #ffffff;
+            color: #000000;
+        }
+
+        .btn-primary {
+            background: #000000;
+            color: #ffffff;
+            border-color: #000000;
+        }
+
+        .btn-primary:hover {
+            background: #333333;
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: #000000;
+            border-color: #cccccc;
+        }
+
+        .btn-secondary:hover {
+            background: #f0f0f0;
+        }
+
+        .btn-ai {
+            background: #ffffff;
+            color: #000000;
+            border-color: #000000;
+        }
+
+        .btn-ai:hover {
+            background: #f0f0f0;
+        }
+
+        .task-list {
+            margin-top: 20px;
+        }
+
+        .task-item {
+            background: #ffffff;
+            padding: 25px;
+            margin-bottom: 1px;
+            border: 1px solid #e0e0e0;
+            transition: all 0.2s ease;
+        }
+
+        .task-item:hover {
+            background: #f8f8f8;
+        }
+
+        .task-item.completed {
+            opacity: 0.6;
+            background: #f0f0f0;
+        }
+
+        .task-item.high-priority {
+            border-left: 3px solid #000000;
+        }
+
+        .task-title {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #000000;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .task-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.8em;
+            color: #666666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .action-btn {
+            padding: 8px 16px;
+            border: 1px solid #cccccc;
+            cursor: pointer;
+            font-size: 0.7em;
+            font-weight: normal;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s ease;
+            background: #ffffff;
+            color: #000000;
+        }
+
+        .action-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .btn-complete,
+        .btn-edit,
+        .btn-delete {
+            border-color: #000000;
+        }
+
+        .ai-suggestion {
+            background: #f8f8f8;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .ai-suggestion h4 {
+            color: #000000;
+            margin-bottom: 10px;
+            font-size: 0.8em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .ai-suggestion p {
+            color: #666666;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1px;
+            margin-bottom: 30px;
+            background: #e0e0e0;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            padding: 20px;
+            text-align: center;
+            border: none;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: normal;
+            color: #000000;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.7em;
+            color: #666666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .client-item {
+            background: #ffffff;
+            padding: 15px 0;
+            margin: 0;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .client-item:hover {
+            background: #f8f8f8;
+        }
+
+        .client-company {
+            font-weight: bold;
+            color: #000000;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .client-name {
+            color: #666666;
+            font-size: 0.8em;
+            margin-top: 3px;
+        }
+
+        .progress-bar {
+            background: #f0f0f0;
+            height: 2px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #000000;
+            transition: width 0.3s ease;
+        }
+
+        .file-item {
+            background: #f8f8f8;
+            padding: 10px 15px;
+            margin: 5px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8em;
+            border: 1px solid #e0e0e0;
+        }
+
+        .file-name {
+            color: #000000;
+            flex: 1;
+        }
+
+        .file-size {
+            color: #666666;
+            font-size: 0.8em;
+        }
+
+        .file-remove {
+            background: #000000;
+            color: #ffffff;
+            border: none;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 0.7em;
+            margin-left: 10px;
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar,
+            .ai-panel {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>TASK with AI</h1>
+            <p>Craft with Pride - Professional Task Management System</p>
+        </div>
+
+        <div class="main-content">
+            <!-- サイドバー -->
+            <div class="sidebar">
+                <h3>Projects</h3>
+                <ul class="project-list" id="projectList">
+                    <li class="project-item active" data-project="all">All Tasks</li>
+                    <li class="project-item" data-project="work">Business</li>
+                    <li class="project-item" data-project="personal">Personal</li>
+                    <li class="project-item" data-project="urgent">Urgent</li>
+                </ul>
+
+                <h3 style="margin-top: 30px;">Client Management</h3>
+                <button class="add-task-btn" onclick="toggleClientForm()" style="width: 100%; margin-bottom: 15px; padding: 8px 12px; font-size: 14px;">
+                    Register Client
+                </button>
+                <div class="project-list" id="clientList">
+                    <!-- クライアント一覧がここに表示されます -->
+                </div>
+
+                <h3 style="margin-top: 30px;">Email Support</h3>
+                <button class="add-task-btn" onclick="toggleEmailHelper()" style="width: 100%; margin-bottom: 15px; padding: 8px 12px; font-size: 14px;">
+                    Email Response
+                </button>
+
+                <h3 style="margin-top: 30px;">Data Sharing</h3>
+                <button class="add-task-btn" onclick="exportTasks()" style="width: 100%; margin-bottom: 8px; padding: 8px 12px; font-size: 14px;">
+                    Export Data
+                </button>
+                <button class="add-task-btn" onclick="importTasks()" style="width: 100%; margin-bottom: 8px; padding: 8px 12px; font-size: 14px;">
+                    Import Data
+                </button>
+                <button class="add-task-btn" onclick="generateReport()" style="width: 100%; margin-bottom: 15px; padding: 8px 12px; font-size: 14px;">
+                    Generate Report
+                </button>
+                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="handleImport(event)">
+            </div>
+
+            <!-- メインエリア -->
+            <div class="task-area">
+                <div class="task-header">
+                    <h2 id="sectionTitle">Mission Briefing</h2>
+                    <div>
+                        <button class="add-task-btn" onclick="toggleTaskInput()" id="addTaskBtn">
+                            New Mission
+                        </button>
+                    </div>
+                </div>
+
+                <!-- シンプルなタスク作成フォーム -->
+                <div class="task-input-area" id="taskInputArea">
+                    <h3 id="formTitle" style="margin-bottom: 20px; color: #000000;">New Task</h3>
+                    
+                    <div class="input-group">
+                        <label>Task Title</label>
+                        <input type="text" id="taskTitle" placeholder="Enter task title">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Description</label>
+                        <textarea id="taskDescription" rows="3" placeholder="Task details"></textarea>
+                    </div>
+
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label>Priority</label>
+                            <select id="taskPriority">
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                                <option value="low">Low</option>
+                            </select>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>Due Date</label>
+                            <input type="date" id="taskDueDate">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>Project</label>
+                            <select id="taskProject">
+                                <option value="work">Business</option>
+                                <option value="personal">Personal</option>
+                                <option value="urgent">Urgent</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>AI Tool Selection</label>
+                        <select id="aiTool" onchange="generatePrompt()">
+                            <option value="">Select AI Tool</option>
+                            <option value="chatgpt">ChatGPT</option>
+                            <option value="claude">Claude</option>
+                            <option value="gemini">Gemini</option>
+                            <option value="copilot">Copilot</option>
+                        </select>
+                        <div id="aiRecommendation" style="margin-top: 8px; padding: 8px; background: #f8f8f8; border: 1px solid #e0e0e0; display: none;">
+                            <div style="color: #000000; font-size: 12px; font-weight: 600;"></div>
+                        </div>
+                        <div id="timeEstimation" style="margin-top: 8px; padding: 8px; background: #f8f8f8; border: 1px solid #e0e0e0; display: none;">
+                            <div style="color: #000000; font-size: 12px; font-weight: 600;"></div>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Attach Files</label>
+                        <input type="file" id="taskFiles" multiple accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,.gif,.xlsx,.pptx" onchange="handleFileSelection()">
+                        <div id="fileList" style="margin-top: 10px;"></div>
+                    </div>
+
+                    <div class="input-group" id="promptOutput" style="display: none;">
+                        <label>Generated Prompt</label>
+                        <textarea id="generatedPrompt" rows="4" readonly style="background: #f8f8f8; border: 1px solid #e0e0e0;"></textarea>
+                        <button type="button" class="btn btn-ai" onclick="copyPrompt()" style="margin-top: 8px; padding: 8px 16px;">Copy Prompt</button>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-primary" id="saveTaskBtn" onclick="saveTask()">Create Task</button>
+                        <button class="btn btn-ai" onclick="analyzeTaskAndRecommend()">AI Analyze</button>
+                        <button class="btn btn-ai" onclick="generatePrompt()">Generate Prompt</button>
+                        <button class="btn btn-secondary" onclick="cancelTaskEdit()">Cancel</button>
+                    </div>
+                </div>
+
+                <!-- タスクリスト -->
+                <div class="task-list" id="taskList">
+                    <!-- タスクがここに動的に追加されます -->
+                </div>
+            </div>
+
+            <!-- AIパネル -->
+            <div class="ai-panel">
+                <h3>
+                    <span class="ai-icon">AI</span>
+                    Assistant
+                </h3>
+
+                <div class="ai-suggestion">
+                    <h4>Today's Focus</h4>
+                    <p>You have 3 high priority tasks. Start with "Presentation Materials" for maximum impact.</p>
+                </div>
+
+                <div class="ai-suggestion">
+                    <h4>Time Management</h4>
+                    <p>Average completion time this week: 2.5 hours. Break down larger tasks for better efficiency.</p>
+                </div>
+
+                <div class="stats-overview">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalTasks">0</div>
+                        <div class="stat-label">Total</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="completedTasks">0</div>
+                        <div class="stat-label">Completed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="pendingTasks">0</div>
+                        <div class="stat-label">Pending</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // シンプルなタスク管理システム
+        class TaskManager {
+            constructor() {
+                this.tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+                this.clients = JSON.parse(localStorage.getItem('clients')) || [];
+                this.currentProject = 'all';
+                this.currentView = 'tasks';
+                this.editingTaskId = null;
+                this.selectedFiles = [];
+                this.init();
+            }
+
+            init() {
+                this.renderTasks();
+                this.updateStats();
+                this.setupEventListeners();
+                this.setDefaultDate();
+            }
+
+            setupEventListeners() {
+                // プロジェクトフィルタリング
+                document.getElementById('projectList').addEventListener('click', (e) => {
+                    if (e.target.classList.contains('project-item')) {
+                        document.querySelectorAll('.project-item').forEach(item => item.classList.remove('active'));
+                        e.target.classList.add('active');
+                        this.currentProject = e.target.dataset.project;
+                        this.renderTasks();
+                    }
+                });
+            }
+
+            setDefaultDate() {
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                document.getElementById('taskDueDate').value = tomorrow.toISOString().split('T')[0];
+            }
+
+            toggleTaskInput() {
+                const inputArea = document.getElementById('taskInputArea');
+                inputArea.classList.toggle('active');
+                
+                if (inputArea.classList.contains('active')) {
+                    this.resetForm();
+                    this.editingTaskId = null;
+                    document.getElementById('formTitle').textContent = 'New Task';
+                    document.getElementById('saveTaskBtn').textContent = 'Create Task';
+                    document.getElementById('taskTitle').focus();
+                } else {
+                    this.resetForm();
+                    this.editingTaskId = null;
+                }
+            }
+
+            resetForm() {
+                document.getElementById('taskTitle').value = '';
+                document.getElementById('taskDescription').value = '';
+                document.getElementById('taskPriority').value = 'medium';
+                document.getElementById('taskProject').value = 'work';
+                document.getElementById('aiTool').value = '';
+                document.getElementById('taskFiles').value = '';
+                document.getElementById('aiRecommendation').style.display = 'none';
+                document.getElementById('timeEstimation').style.display = 'none';
+                document.getElementById('promptOutput').style.display = 'none';
+                this.selectedFiles = [];
+                this.renderFileList();
+                this.setDefaultDate();
+            }
+
+            saveTask() {
+                const title = document.getElementById('taskTitle').value.trim();
+                const description = document.getElementById('taskDescription').value.trim();
+                const priority = document.getElementById('taskPriority').value;
+                const dueDate = document.getElementById('taskDueDate').value;
+                const project = document.getElementById('taskProject').value;
+
+                if (!title) {
+                    alert('Please enter a task title');
+                    return;
+                }
+
+                if (this.editingTaskId) {
+                    // 編集モード
+                    const taskIndex = this.tasks.findIndex(t => t.id === this.editingTaskId);
+                    if (taskIndex !== -1) {
+                        this.tasks[taskIndex] = {
+                            ...this.tasks[taskIndex],
+                            title,
+                            description,
+                            priority,
+                            dueDate,
+                            project,
+                            files: [...this.selectedFiles],
+                            updatedAt: new Date().toISOString()
+                        };
+                    }
+                    this.editingTaskId = null;
+                } else {
+                    // 新規作成モード
+                    const newTask = {
+                        id: Date.now(),
+                        title,
+                        description,
+                        priority,
+                        dueDate,
+                        project,
+                        files: [...this.selectedFiles],
+                        completed: false,
+                        createdAt: new Date().toISOString()
+                    };
+                    this.tasks.unshift(newTask);
+                }
+
+                this.saveTasks();
+                this.renderTasks();
+                this.updateStats();
+                this.toggleTaskInput();
+            }
+
+            editTask(taskId) {
+                const task = this.tasks.find(t => t.id === taskId);
+                if (!task) return;
+
+                // フォームに既存データを入力
+                document.getElementById('taskTitle').value = task.title;
+                document.getElementById('taskDescription').value = task.description || '';
+                document.getElementById('taskPriority').value = task.priority;
+                document.getElementById('taskDueDate').value = task.dueDate || '';
+                document.getElementById('taskProject').value = task.project;
+
+                // 既存ファイルを設定
+                this.selectedFiles = task.files || [];
+                this.renderFileList();
+
+                // 編集モードに設定
+                this.editingTaskId = taskId;
+                document.getElementById('formTitle').textContent = 'Edit Task';
+                document.getElementById('saveTaskBtn').textContent = 'Update Task';
+
+                // フォームを表示
+                document.getElementById('taskInputArea').classList.add('active');
+                document.getElementById('taskTitle').focus();
+            }
+
+            cancelTaskEdit() {
+                this.editingTaskId = null;
+                this.toggleTaskInput();
+            }
+
+            toggleTask(taskId) {
+                const task = this.tasks.find(t => t.id === taskId);
+                if (task) {
+                    task.completed = !task.completed;
+                    this.saveTasks();
+                    this.renderTasks();
+                    this.updateStats();
+                }
+            }
+
+            deleteTask(taskId) {
+                if (confirm('Delete this task?')) {
+                    this.tasks = this.tasks.filter(t => t.id !== taskId);
+                    this.saveTasks();
+                    this.renderTasks();
+                    this.updateStats();
+                }
+            }
+
+            renderTasks() {
+                const taskList = document.getElementById('taskList');
+                let filteredTasks = this.tasks;
+
+                if (this.currentProject !== 'all') {
+                    filteredTasks = this.tasks.filter(task => task.project === this.currentProject);
+                }
+
+                if (filteredTasks.length === 0) {
+                    taskList.innerHTML = '<div style="text-align: center; color: #666666; padding: 40px;">No tasks found</div>';
+                    return;
+                }
+
+                taskList.innerHTML = filteredTasks.map(task => `
+                    <div class="task-item ${task.completed ? 'completed' : ''} ${task.priority === 'high' ? 'high-priority' : ''}">
+                        <div class="task-title">${task.title}</div>
+                        <div class="task-meta">
+                            <span>Priority: ${task.priority}</span>
+                            <span>Due: ${task.dueDate || 'No date'}</span>
+                            <span>Project: ${task.project}</span>
+                        </div>
+                        ${task.description ? `<div style="color: #666666; margin: 10px 0; font-size: 0.9em;">${task.description}</div>` : ''}
+                        ${task.files && task.files.length > 0 ? `
+                            <div style="margin: 10px 0;">
+                                <div style="font-size: 0.8em; color: #666666; margin-bottom: 5px;">📎 Attached Files (${task.files.length})</div>
+                                <div style="display: flex; flex-wrap: wrap; gap: 5px;">
+                                    ${task.files.map(file => `
+                                        <div class="file-item" style="font-size: 0.7em; padding: 4px 8px;">
+                                            <span class="file-name">${file.name}</span>
+                                            <span class="file-size">(${this.formatFileSize(file.size)})</span>
+                                            <button class="file-remove" onclick="taskManager.downloadFile(${task.id}, '${file.name}')" style="margin-left: 5px; padding: 2px 4px;">View</button>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                        <div class="task-actions">
+                            <button class="action-btn btn-complete" onclick="taskManager.toggleTask(${task.id})">
+                                ${task.completed ? 'Undo' : 'Complete'}
+                            </button>
+                            <button class="action-btn btn-edit" onclick="taskManager.editTask(${task.id})">Edit</button>
+                            <button class="action-btn btn-delete" onclick="taskManager.deleteTask(${task.id})">Delete</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            updateStats() {
+                const total = this.tasks.length;
+                const completed = this.tasks.filter(t => t.completed).length;
+                const pending = total - completed;
+
+                document.getElementById('totalTasks').textContent = total;
+                document.getElementById('completedTasks').textContent = completed;
+                document.getElementById('pendingTasks').textContent = pending;
+            }
+
+            // ファイル関連の機能
+            handleFileSelection() {
+                const fileInput = document.getElementById('taskFiles');
+                const files = Array.from(fileInput.files);
+                
+                for (const file of files) {
+                    // ファイルサイズチェック (5MB制限)
+                    if (file.size > 5 * 1024 * 1024) {
+                        alert(`File "${file.name}" is too large. Maximum size is 5MB.`);
+                        continue;
+                    }
+                    
+                    // 重複チェック
+                    if (this.selectedFiles.some(f => f.name === file.name && f.size === file.size)) {
+                        continue;
+                    }
+                    
+                    // ファイルをBase64に変換して保存
+                    this.convertFileToBase64(file);
+                }
+                
+                // input要素をリセット
+                fileInput.value = '';
+            }
+
+            convertFileToBase64(file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const fileData = {
+                        name: file.name,
+                        size: file.size,
+                        type: file.type,
+                        data: e.target.result,
+                        uploadedAt: new Date().toISOString()
+                    };
+                    
+                    this.selectedFiles.push(fileData);
+                    this.renderFileList();
+                };
+                reader.readAsDataURL(file);
+            }
+
+            renderFileList() {
+                const fileList = document.getElementById('fileList');
+                
+                if (this.selectedFiles.length === 0) {
+                    fileList.innerHTML = '';
+                    return;
+                }
+                
+                fileList.innerHTML = this.selectedFiles.map((file, index) => `
+                    <div class="file-item">
+                        <span class="file-name">${file.name}</span>
+                        <span class="file-size">${this.formatFileSize(file.size)}</span>
+                        <button class="file-remove" onclick="taskManager.removeFile(${index})">Remove</button>
+                    </div>
+                `).join('');
+            }
+
+            removeFile(index) {
+                this.selectedFiles.splice(index, 1);
+                this.renderFileList();
+            }
+
+            formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            downloadFile(taskId, fileName) {
+                const task = this.tasks.find(t => t.id === taskId);
+                if (!task || !task.files) return;
+                
+                const file = task.files.find(f => f.name === fileName);
+                if (!file) return;
+                
+                // Base64データからBlobを作成
+                const byteCharacters = atob(file.data.split(',')[1]);
+                const byteNumbers = new Array(byteCharacters.length);
+                for (let i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                }
+                const byteArray = new Uint8Array(byteNumbers);
+                const blob = new Blob([byteArray], { type: file.type });
+                
+                // ダウンロードリンクを作成
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = file.name;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+
+            saveTasks() {
+                localStorage.setItem('tasks', JSON.stringify(this.tasks));
+            }
+
+            // AI機能：タスク分析とAIツール推奨
+            analyzeTaskAndRecommend() {
+                const title = document.getElementById('taskTitle').value.trim();
+                const description = document.getElementById('taskDescription').value.trim();
+                
+                if (!title) {
+                    alert('Please enter a task title');
+                    return;
+                }
+                
+                const analysis = this.performAdvancedTaskAnalysis(title, description);
+                
+                // AIツール推奨表示
+                const recommendation = document.getElementById('aiRecommendation');
+                recommendation.style.display = 'block';
+                recommendation.innerHTML = `
+                    <div style="color: #000000; font-size: 12px; font-weight: 600;">
+                        🤖 Recommended AI Tool: ${analysis.recommendedAITool.toUpperCase()}
+                    </div>
+                    <div style="color: #666666; font-size: 11px; margin-top: 3px;">
+                        ${analysis.toolReason}
+                    </div>
+                `;
+                
+                // 時間推定表示
+                const timeEst = document.getElementById('timeEstimation');
+                timeEst.style.display = 'block';
+                timeEst.innerHTML = `
+                    <div style="color: #000000; font-size: 12px; font-weight: 600;">
+                        ⏱️ Estimated Time: ${analysis.estimatedTime}
+                    </div>
+                    <div style="color: #666666; font-size: 11px; margin-top: 3px;">
+                        Complexity: ${analysis.complexity} | Urgency: ${analysis.urgency} | Type: ${analysis.taskType}
+                    </div>
+                `;
+                
+                // AIツールを自動選択
+                document.getElementById('aiTool').value = analysis.recommendedAITool;
+            }
+
+            performAdvancedTaskAnalysis(title, description) {
+                const text = `${title} ${description}`.toLowerCase();
+                
+                // タスクタイプの判定
+                const taskType = this.identifyTaskType(text);
+                
+                // 複雑度の判定
+                const complexity = this.analyzeComplexity(text, title, description);
+                
+                // 緊急度の判定
+                const urgency = this.analyzeUrgency(text, title);
+                
+                // 時間推定
+                const timeEstimate = this.estimateWorkTime(taskType, complexity, urgency, text);
+                
+                // AIツール推奨
+                const aiRecommendation = this.recommendAITool(taskType, complexity, urgency);
+                
+                return {
+                    taskType,
+                    complexity,
+                    urgency,
+                    estimatedTime: timeEstimate.display,
+                    recommendedAITool: aiRecommendation.tool,
+                    toolReason: aiRecommendation.reason
+                };
+            }
+
+            identifyTaskType(text) {
+                const patterns = {
+                    'レポート': ['レポート', 'report', '分析', 'analysis', 'データ', 'data', '調査', 'research'],
+                    'プレゼン': ['プレゼン', 'presentation', '発表', 'スライド', 'slide', 'pitch'],
+                    'コーディング': ['コード', 'code', 'プログラム', 'program', 'システム', 'system', 'アプリ', 'app'],
+                    'デザイン': ['デザイン', 'design', 'ui', 'ux', 'figma', 'adobe'],
+                    'マーケティング': ['マーケティング', 'marketing', 'sns', '広告', 'advertisement'],
+                    '文書作成': ['文書', 'document', '資料', 'material', '作成', 'create'],
+                    '会議': ['会議', 'meeting', 'ミーティング', '打ち合わせ'],
+                    '企画': ['企画', 'planning', '戦略', 'strategy', '計画', 'plan']
+                };
+                
+                for (const [type, keywords] of Object.entries(patterns)) {
+                    if (keywords.some(keyword => text.includes(keyword))) {
+                        return type;
+                    }
+                }
+                return '一般';
+            }
+
+            analyzeComplexity(text, title, description) {
+                let score = 0;
+                
+                // 文字数による判定
+                if (description.length > 100) score += 1;
+                if (title.length > 20) score += 1;
+                
+                // キーワードによる判定
+                const complexKeywords = ['複雑', 'complex', '詳細', 'detail', '分析', 'analysis', '戦略', 'strategy'];
+                const simpleKeywords = ['簡単', 'simple', '確認', 'check', '更新', 'update'];
+                
+                complexKeywords.forEach(keyword => {
+                    if (text.includes(keyword)) score += 1;
+                });
+                
+                simpleKeywords.forEach(keyword => {
+                    if (text.includes(keyword)) score -= 1;
+                });
+                
+                if (score >= 2) return '高';
+                if (score <= 0) return '低';
+                return '中';
+            }
+
+            analyzeUrgency(text, title) {
+                const urgentKeywords = ['緊急', 'urgent', '至急', 'asap', '今日', 'today', '明日', 'tomorrow'];
+                const normalKeywords = ['来週', 'next week', '来月', 'next month'];
+                
+                if (urgentKeywords.some(keyword => text.includes(keyword) || title.toLowerCase().includes(keyword))) {
+                    return '緊急';
+                }
+                if (normalKeywords.some(keyword => text.includes(keyword))) {
+                    return '通常';
+                }
+                return '通常';
+            }
+
+            estimateWorkTime(taskType, complexity, urgency, text) {
+                const baseTime = {
+                    'レポート': 4,
+                    'プレゼン': 3,
+                    'コーディング': 6,
+                    'デザイン': 4,
+                    'マーケティング': 3,
+                    '文書作成': 2,
+                    '会議': 1,
+                    '企画': 5,
+                    '一般': 2
+                };
+                
+                let hours = baseTime[taskType] || 2;
+                
+                // 複雑度による調整
+                if (complexity === '高') hours *= 1.5;
+                if (complexity === '低') hours *= 0.7;
+                
+                // 緊急度による調整
+                if (urgency === '緊急') hours *= 0.8; // 緊急時は効率重視
+                
+                let display;
+                if (hours < 1) {
+                    display = `${Math.round(hours * 60)}分`;
+                } else if (hours < 8) {
+                    display = `${hours}時間`;
+                } else {
+                    const days = Math.ceil(hours / 8);
+                    display = `${days}日 (${Math.round(hours)}時間)`;
+                }
+                
+                return { hours, display };
+            }
+
+            recommendAITool(taskType, complexity, urgency) {
+                const recommendations = {
+                    'レポート': { tool: 'claude', reason: 'High-quality document creation and detailed data analysis' },
+                    'プレゼン': { tool: 'chatgpt', reason: 'Excellent for storytelling and presentation materials' },
+                    'コーディング': { tool: 'copilot', reason: 'Specialized in code generation and debugging support' },
+                    'デザイン': { tool: 'claude', reason: 'Strong in UI/UX design and usability analysis' },
+                    'マーケティング': { tool: 'gemini', reason: 'Excellent with real-time information and market data' },
+                    '文書作成': { tool: 'claude', reason: 'Superior writing and editing capabilities' },
+                    '会議': { tool: 'chatgpt', reason: 'Great for agenda creation and facilitation support' },
+                    '企画': { tool: 'claude', reason: 'Optimal for strategic planning and comprehensive analysis' },
+                    '一般': { tool: 'chatgpt', reason: 'Versatile for general-purpose tasks' }
+                };
+                
+                if (urgency === '緊急') {
+                    return { tool: 'chatgpt', reason: 'Fast response for urgent tasks' };
+                }
+                
+                if (complexity === '高') {
+                    return { tool: 'claude', reason: 'Best for complex task analysis and high-quality outputs' };
+                }
+                
+                return recommendations[taskType] || recommendations['一般'];
+            }
+
+            generateBusinessPrompt(title, description, aiTool) {
+                const taskType = this.identifyTaskType(`${title} ${description}`.toLowerCase());
+                
+                const prompts = {
+                    chatgpt: {
+                        'プレゼン': `## 🎯 Executive Presentation Mastery
+
+**Task Details:**
+- Objective: ${title}
+- Context: ${description}
+
+**Professional Presentation Request:**
+
+I need a comprehensive presentation strategy and content framework. Please provide expert guidance on:
+
+**📊 Strategic Framework**
+- Executive summary and key message hierarchy
+- Audience analysis and stakeholder mapping
+- Compelling narrative structure and flow
+
+**🎪 Audience Engagement**
+- Executive audience analysis techniques
+- Attention-grabbing opening strategies
+- Engagement maintenance throughout presentation
+
+**📋 Content Architecture**
+- Message hierarchy and flow optimization
+- Data storytelling methodologies
+- Call-to-action formulation
+
+Please focus on actionable insights that drive business results.`,
+                        default: `## ⚡ Business Process Optimization
+
+**Task Parameters:**
+- Objective: ${title}
+- Scope: ${description}
+
+**Optimization Consultation Request:**
+
+I need comprehensive business process optimization recommendations. Please analyze and provide guidance on:
+
+**🔧 Process Engineering**
+- Workflow analysis and redesign
+- Bottleneck identification and resolution
+- Automation opportunity assessment
+
+**📊 Performance Metrics**
+- KPI definition and tracking
+- Benchmarking strategies
+- ROI measurement frameworks
+
+Focus on actionable insights that drive measurable business outcomes.`
+                    },
+                    claude: {
+                        'レポート': `## 📊 Strategic Business Analysis
+
+**Assignment Brief:**
+- Project: ${title}
+- Requirements: ${description}
+
+**Comprehensive Analysis Request:**
+
+I require a thorough business analysis with strategic insights. Please provide:
+
+**📈 Data Analysis Framework**
+- Quantitative and qualitative data examination
+- Statistical analysis and trend identification
+- Predictive modeling and forecasting
+
+**🎯 Strategic Insights**
+- Market position analysis
+- Competitive landscape assessment
+- Risk and opportunity identification
+
+**📋 Executive Recommendations**
+- Actionable strategic recommendations
+- Implementation roadmap
+- Success metrics and KPIs
+
+Please ensure all analysis is data-driven and business-focused.`,
+                        default: `## 🎯 Strategic Business Consultation
+
+**Project Scope:**
+- Objective: ${title}
+- Details: ${description}
+
+**Expert Analysis Request:**
+
+I need strategic business guidance with comprehensive analysis. Please provide:
+
+**🔍 Situation Analysis**
+- Current state assessment
+- Challenge identification
+- Opportunity mapping
+
+**💡 Strategic Solutions**
+- Evidence-based recommendations
+- Best practice implementation
+- Risk mitigation strategies
+
+Please provide detailed, actionable insights with clear implementation steps.`
+                    }
+                };
+                
+                const toolPrompts = prompts[aiTool] || prompts.chatgpt;
+                return toolPrompts[taskType] || toolPrompts.default;
+            }
+
+            // データ共有機能
+            exportTasks() {
+                const data = {
+                    tasks: this.tasks,
+                    clients: this.clients,
+                    exportDate: new Date().toISOString()
+                };
+                
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `tasks-export-${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                
+                alert('Tasks exported successfully!');
+            }
+
+            importTasks() {
+                document.getElementById('importFile').click();
+            }
+
+            generateReport() {
+                alert('Report generation feature coming soon!');
+            }
+        }
+
+        // グローバル変数として設定
+        const taskManager = new TaskManager();
+
+        // グローバル関数
+        function toggleTaskInput() {
+            taskManager.toggleTaskInput();
+        }
+
+        function saveTask() {
+            taskManager.saveTask();
+        }
+
+        function cancelTaskEdit() {
+            taskManager.cancelTaskEdit();
+        }
+
+        function analyzeTaskAndRecommend() {
+            taskManager.analyzeTaskAndRecommend();
+        }
+
+        function generatePrompt() {
+            const title = document.getElementById('taskTitle').value.trim();
+            const description = document.getElementById('taskDescription').value.trim();
+            const aiTool = document.getElementById('aiTool').value;
+            
+            if (!title || !aiTool) {
+                if (!title) alert('Please enter a task title');
+                if (!aiTool) alert('Please select an AI tool');
+                return;
+            }
+            
+            const prompt = taskManager.generateBusinessPrompt(title, description, aiTool);
+            document.getElementById('generatedPrompt').value = prompt;
+            document.getElementById('promptOutput').style.display = 'block';
+            
+            // プロンプト生成エリアにスクロール
+            document.getElementById('promptOutput').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function copyPrompt() {
+            const promptText = document.getElementById('generatedPrompt').value;
+            
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(promptText).then(() => {
+                    alert('✅ Prompt copied to clipboard!');
+                }).catch(() => {
+                    fallbackCopy(promptText);
+                });
+            } else {
+                fallbackCopy(promptText);
+            }
+        }
+
+        function fallbackCopy(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                alert('✅ Prompt copied to clipboard!');
+            } catch (err) {
+                alert('❌ Copy failed. Please manually select and copy the text.');
+            }
+            
+            document.body.removeChild(textArea);
+        }
+
+        function toggleClientForm() {
+            alert('Client management feature coming soon!');
+        }
+
+        function toggleEmailHelper() {
+            alert('Email helper feature coming soon!');
+        }
+
+        function exportTasks() {
+            taskManager.exportTasks();
+        }
+
+        function importTasks() {
+            taskManager.importTasks();
+        }
+
+        function generateReport() {
+            taskManager.generateReport();
+        }
+
+        function handleFileSelection() {
+            taskManager.handleFileSelection();
+        }
+
+        function handleImport(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.tasks) {
+                        taskManager.tasks = data.tasks;
+                        taskManager.saveTasks();
+                        taskManager.renderTasks();
+                        taskManager.updateStats();
+                        alert('Tasks imported successfully!');
+                    }
+                } catch (error) {
+                    alert('Invalid file format');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+    </script>
+</body>
+</html>
