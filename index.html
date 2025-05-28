@@ -627,6 +627,135 @@
                     </div>
                 </div>
 
+                <!-- Email Support Form -->
+                <div class="task-input-area" id="emailHelperArea">
+                    <h3 style="margin-bottom: 20px; color: #000000;">Email Response Generator</h3>
+                    
+                    <div class="input-group">
+                        <label>Select Client</label>
+                        <select id="emailClient">
+                            <option value="">Select a client</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Received Email Content</label>
+                        <textarea id="receivedEmail" rows="4" placeholder="Paste the email content you received here..."></textarea>
+                    </div>
+
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label>Response Type</label>
+                            <select id="emailType">
+                                <option value="">Select response type</option>
+                                <option value="proposal">📋 Proposal & Quote</option>
+                                <option value="meeting">📅 Meeting & Schedule</option>
+                                <option value="followup">📞 Follow-up</option>
+                                <option value="thanks">🙏 Thanks & Gratitude</option>
+                                <option value="apology">🙇 Apology</option>
+                                <option value="information">📄 Information Sharing</option>
+                                <option value="confirmation">✅ Confirmation</option>
+                                <option value="decline">❌ Decline</option>
+                            </select>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>Tone</label>
+                            <select id="emailTone">
+                                <option value="formal">Formal</option>
+                                <option value="friendly">Friendly</option>
+                                <option value="urgent">Urgent</option>
+                            </select>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>Priority</label>
+                            <select id="emailPriority">
+                                <option value="normal">Normal</option>
+                                <option value="high">High</option>
+                                <option value="urgent">Urgent</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Additional Requirements</label>
+                        <textarea id="emailRequirements" rows="3" placeholder="Any specific points to include in the response..."></textarea>
+                    </div>
+
+                    <div class="input-group" id="emailOutput" style="display: none;">
+                        <label>Generated Email Response</label>
+                        <textarea id="generatedEmail" rows="8" readonly style="background: #f8f8f8; border: 1px solid #e0e0e0;"></textarea>
+                        <div style="margin-top: 8px; display: flex; gap: 10px;">
+                            <button type="button" class="btn btn-ai" onclick="copyEmail()">Copy Email</button>
+                            <button type="button" class="btn btn-primary" onclick="createTaskFromEmail()">Create Task</button>
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="generateEmailResponse()">Generate Response</button>
+                        <button class="btn btn-secondary" onclick="toggleEmailHelper()">Cancel</button>
+                    </div>
+                </div>
+
+                <!-- Client Management Form -->
+                <div class="task-input-area" id="clientInputArea">
+                    <h3 style="margin-bottom: 20px; color: #000000;">Client Registration</h3>
+                    
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label>Company Name</label>
+                            <input type="text" id="clientCompany" placeholder="e.g., ABC Corporation">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>Contact Person</label>
+                            <input type="text" id="clientName" placeholder="e.g., John Smith">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>Position</label>
+                            <input type="text" id="clientPosition" placeholder="e.g., Sales Manager">
+                        </div>
+                    </div>
+
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label>Email Address</label>
+                            <input type="email" id="clientEmail" placeholder="john@company.com">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>Phone Number</label>
+                            <input type="tel" id="clientPhone" placeholder="+1-555-123-4567">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>Industry</label>
+                            <select id="clientIndustry">
+                                <option value="">Select industry</option>
+                                <option value="Technology">Technology</option>
+                                <option value="Finance">Finance</option>
+                                <option value="Healthcare">Healthcare</option>
+                                <option value="Manufacturing">Manufacturing</option>
+                                <option value="Retail">Retail</option>
+                                <option value="Education">Education</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Notes</label>
+                        <textarea id="clientNotes" rows="3" placeholder="Important information about this client..."></textarea>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="saveClient()">Save Client</button>
+                        <button class="btn btn-secondary" onclick="toggleClientForm()">Cancel</button>
+                    </div>
+                </div>
+
                 <!-- タスクリスト -->
                 <div class="task-list" id="taskList">
                     <!-- タスクがここに動的に追加されます -->
@@ -682,8 +811,11 @@
             }
 
             init() {
+                this.loadSampleClients();
                 this.renderTasks();
+                this.renderClients();
                 this.updateStats();
+                this.updateClientDropdowns();
                 this.setupEventListeners();
                 this.setDefaultDate();
             }
@@ -996,6 +1128,396 @@
                 localStorage.setItem('tasks', JSON.stringify(this.tasks));
             }
 
+            saveClients() {
+                localStorage.setItem('clients', JSON.stringify(this.clients));
+            }
+
+            loadSampleClients() {
+                if (this.clients.length === 0) {
+                    this.clients = [
+                        {
+                            id: Date.now() + 1,
+                            company: 'ABC Corporation',
+                            name: 'John Smith',
+                            position: 'Sales Manager',
+                            email: 'john@abc-corp.com',
+                            phone: '+1-555-123-4567',
+                            industry: 'Technology',
+                            notes: 'Key decision maker for tech solutions.',
+                            createdAt: new Date()
+                        },
+                        {
+                            id: Date.now() + 2,
+                            company: 'Global Solutions Inc.',
+                            name: 'Sarah Johnson',
+                            position: 'CTO',
+                            email: 'sarah@globalsolutions.com',
+                            phone: '+1-555-987-6543',
+                            industry: 'Finance',
+                            notes: 'Technical expert, prefers detailed proposals.',
+                            createdAt: new Date()
+                        }
+                    ];
+                    this.saveClients();
+                }
+            }
+
+            // Client Management Functions
+            toggleClientForm() {
+                const clientArea = document.getElementById('clientInputArea');
+                const taskArea = document.getElementById('taskInputArea');
+                const emailArea = document.getElementById('emailHelperArea');
+                
+                taskArea.classList.remove('active');
+                emailArea.classList.remove('active');
+                clientArea.classList.toggle('active');
+                
+                if (!clientArea.classList.contains('active')) {
+                    this.resetClientForm();
+                }
+            }
+
+            resetClientForm() {
+                document.getElementById('clientCompany').value = '';
+                document.getElementById('clientName').value = '';
+                document.getElementById('clientPosition').value = '';
+                document.getElementById('clientEmail').value = '';
+                document.getElementById('clientPhone').value = '';
+                document.getElementById('clientIndustry').value = '';
+                document.getElementById('clientNotes').value = '';
+            }
+
+            saveClient() {
+                const company = document.getElementById('clientCompany').value.trim();
+                const name = document.getElementById('clientName').value.trim();
+                const position = document.getElementById('clientPosition').value.trim();
+                const email = document.getElementById('clientEmail').value.trim();
+                const phone = document.getElementById('clientPhone').value.trim();
+                const industry = document.getElementById('clientIndustry').value;
+                const notes = document.getElementById('clientNotes').value.trim();
+
+                if (!company || !name) {
+                    alert('Company name and contact person are required');
+                    return;
+                }
+
+                const newClient = {
+                    id: Date.now(),
+                    company,
+                    name,
+                    position,
+                    email,
+                    phone,
+                    industry,
+                    notes,
+                    createdAt: new Date()
+                };
+
+                this.clients.unshift(newClient);
+                this.saveClients();
+                this.renderClients();
+                this.updateClientDropdowns();
+                this.toggleClientForm();
+                this.resetClientForm();
+                alert('Client saved successfully!');
+            }
+
+            renderClients() {
+                const clientList = document.getElementById('clientList');
+                
+                if (this.clients.length === 0) {
+                    clientList.innerHTML = '<div style="padding: 10px; color: #666666; font-size: 12px; text-align: center;">No clients registered</div>';
+                    return;
+                }
+
+                clientList.innerHTML = this.clients.map(client => `
+                    <div class="client-item">
+                        <div class="client-company">${client.company}</div>
+                        <div class="client-name">${client.name} (${client.position || ''})</div>
+                        <div style="display: flex; gap: 5px; margin-top: 5px;">
+                            <button class="action-btn" onclick="taskManager.editClient(${client.id})" style="font-size: 10px; padding: 2px 6px;">Edit</button>
+                            <button class="action-btn" onclick="taskManager.deleteClient(${client.id})" style="font-size: 10px; padding: 2px 6px;">Delete</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            updateClientDropdowns() {
+                const taskClientSelect = document.getElementById('taskClient');
+                const emailClientSelect = document.getElementById('emailClient');
+                
+                const clientOptions = this.clients.map(client => 
+                    `<option value="${client.id}">${client.company} (${client.name})</option>`
+                ).join('');
+                
+                if (taskClientSelect) {
+                    taskClientSelect.innerHTML = '<option value="">Select client (optional)</option>' + clientOptions;
+                }
+                if (emailClientSelect) {
+                    emailClientSelect.innerHTML = '<option value="">Select a client</option>' + clientOptions;
+                }
+            }
+
+            editClient(clientId) {
+                const client = this.clients.find(c => c.id === clientId);
+                if (!client) return;
+
+                document.getElementById('clientCompany').value = client.company;
+                document.getElementById('clientName').value = client.name;
+                document.getElementById('clientPosition').value = client.position;
+                document.getElementById('clientEmail').value = client.email;
+                document.getElementById('clientPhone').value = client.phone;
+                document.getElementById('clientIndustry').value = client.industry;
+                document.getElementById('clientNotes').value = client.notes;
+
+                document.getElementById('clientInputArea').classList.add('active');
+            }
+
+            deleteClient(clientId) {
+                if (confirm('Delete this client?')) {
+                    this.clients = this.clients.filter(c => c.id !== clientId);
+                    this.saveClients();
+                    this.renderClients();
+                    this.updateClientDropdowns();
+                }
+            }
+
+            // Email Support Functions
+            toggleEmailHelper() {
+                const emailArea = document.getElementById('emailHelperArea');
+                const taskArea = document.getElementById('taskInputArea');
+                const clientArea = document.getElementById('clientInputArea');
+                
+                taskArea.classList.remove('active');
+                clientArea.classList.remove('active');
+                emailArea.classList.toggle('active');
+                
+                if (!emailArea.classList.contains('active')) {
+                    this.resetEmailForm();
+                }
+            }
+
+            resetEmailForm() {
+                document.getElementById('emailClient').value = '';
+                document.getElementById('receivedEmail').value = '';
+                document.getElementById('emailType').value = '';
+                document.getElementById('emailTone').value = 'formal';
+                document.getElementById('emailPriority').value = 'normal';
+                document.getElementById('emailRequirements').value = '';
+                document.getElementById('emailOutput').style.display = 'none';
+            }
+
+            generateEmailResponse() {
+                const clientId = document.getElementById('emailClient').value;
+                const receivedEmail = document.getElementById('receivedEmail').value.trim();
+                const emailType = document.getElementById('emailType').value;
+                const emailTone = document.getElementById('emailTone').value;
+                const emailPriority = document.getElementById('emailPriority').value;
+                const requirements = document.getElementById('emailRequirements').value.trim();
+
+                if (!receivedEmail || !emailType) {
+                    alert('Please enter received email content and select response type');
+                    return;
+                }
+
+                const client = this.clients.find(c => c.id == clientId);
+                const clientInfo = client ? `${client.name} from ${client.company}` : 'Client';
+                
+                const emailTemplate = this.generateEmailTemplate({
+                    clientInfo,
+                    receivedEmail,
+                    emailType,
+                    emailTone,
+                    emailPriority,
+                    requirements
+                });
+
+                document.getElementById('generatedEmail').value = emailTemplate;
+                document.getElementById('emailOutput').style.display = 'block';
+                document.getElementById('emailOutput').scrollIntoView({ behavior: 'smooth' });
+            }
+
+            generateEmailTemplate(params) {
+                const { clientInfo, receivedEmail, emailType, emailTone, emailPriority, requirements } = params;
+                
+                const templates = {
+                    proposal: {
+                        subject: 'Re: Proposal Request',
+                        content: `Thank you for your interest in our services.
+
+I've reviewed your requirements and would be happy to provide a comprehensive proposal.
+
+Based on your needs, I recommend the following approach:
+${requirements ? `\n${requirements}\n` : ''}
+
+I'll prepare a detailed proposal with timeline and pricing. Would you be available for a brief call this week to discuss the specifics?
+
+Looking forward to working together.`
+                    },
+                    meeting: {
+                        subject: 'Re: Meeting Request',
+                        content: `Thank you for reaching out regarding a meeting.
+
+I'd be happy to schedule time to discuss this further.
+
+Available time slots:
+• Option 1: [Date] at [Time]
+• Option 2: [Date] at [Time]
+• Option 3: [Date] at [Time]
+
+${requirements ? `\nAgenda items:\n${requirements}\n` : ''}
+Please let me know which time works best for you. We can meet in person or via video call, whichever you prefer.`
+                    },
+                    followup: {
+                        subject: 'Following up on our discussion',
+                        content: `I hope this message finds you well.
+
+I wanted to follow up on our recent discussion and see if you have any questions or need additional information.
+
+${requirements ? `\nAs discussed:\n${requirements}\n` : ''}
+Please don't hesitate to reach out if there's anything else I can help clarify.
+
+I look forward to hearing from you.`
+                    },
+                    thanks: {
+                        subject: 'Thank you',
+                        content: `Thank you so much for your time and consideration.
+
+It was great working with you, and I truly appreciate the opportunity.
+
+${requirements ? `\n${requirements}\n` : ''}
+Please don't hesitate to reach out if you need anything in the future.`
+                    },
+                    apology: {
+                        subject: 'Sincere apologies',
+                        content: `I sincerely apologize for the inconvenience this may have caused.
+
+${requirements ? `\nRegarding the issue:\n${requirements}\n` : ''}
+I take full responsibility and have put measures in place to prevent this from happening again.
+
+Thank you for your understanding and patience.`
+                    },
+                    information: {
+                        subject: 'Information Update',
+                        content: `I wanted to share some important information with you.
+
+${requirements ? `${requirements}\n` : ''}
+Please review the details and let me know if you have any questions.
+
+I'm available if you need any clarification.`
+                    },
+                    confirmation: {
+                        subject: 'Confirmation',
+                        content: `Thank you for the information. I can confirm that we'll proceed as discussed.
+
+${requirements ? `\nConfirmed details:\n${requirements}\n` : ''}
+I'll keep you updated on our progress.
+
+Please let me know if anything changes.`
+                    },
+                    decline: {
+                        subject: 'Re: Your Proposal',
+                        content: `Thank you for thinking of us for this opportunity.
+
+After careful consideration, we won't be able to move forward at this time.
+
+${requirements ? `\nReason:\n${requirements}\n` : ''}
+We hope to have the opportunity to work together in the future.`
+                    }
+                };
+                
+                const template = templates[emailType] || templates.information;
+                const greeting = emailTone === 'friendly' ? `Hi ${clientInfo.split(' ')[0]},` : `Dear ${clientInfo},`;
+                const closing = emailTone === 'urgent' ? 'Thanks for your immediate attention.' : 
+                               emailTone === 'friendly' ? 'Best regards,' : 
+                               'Best regards,';
+                
+                const priorityPrefix = emailPriority === 'urgent' ? '[URGENT] ' : 
+                                     emailPriority === 'high' ? '[HIGH PRIORITY] ' : '';
+                
+                return `Subject: ${priorityPrefix}${template.subject}
+
+${greeting}
+
+${template.content}
+
+${closing}
+
+[Your Name]
+[Your Title]
+[Company Name]
+[Contact Information]`;
+            }
+
+            copyEmail() {
+                const emailText = document.getElementById('generatedEmail').value;
+                
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(emailText).then(() => {
+                        alert('✅ Email copied to clipboard!');
+                    }).catch(() => {
+                        this.fallbackCopy(emailText);
+                    });
+                } else {
+                    this.fallbackCopy(emailText);
+                }
+            }
+
+            createTaskFromEmail() {
+                const clientId = document.getElementById('emailClient').value;
+                const emailType = document.getElementById('emailType').value;
+                const generatedEmail = document.getElementById('generatedEmail').value;
+                
+                if (!generatedEmail) {
+                    alert('Please generate an email first');
+                    return;
+                }
+                
+                const client = this.clients.find(c => c.id == clientId);
+                const taskTitle = `Email Response: ${this.getEmailTypeLabel(emailType)}${client ? ` to ${client.company}` : ''}`;
+                const taskDescription = `Review and send email response\n\n${generatedEmail.substring(0, 200)}...`;
+                
+                const newTask = {
+                    id: Date.now(),
+                    title: taskTitle,
+                    description: taskDescription,
+                    priority: 'medium',
+                    dueDate: this.getDateString(1),
+                    project: 'work',
+                    files: [],
+                    completed: false,
+                    createdAt: new Date().toISOString()
+                };
+                
+                this.tasks.unshift(newTask);
+                this.saveTasks();
+                this.toggleEmailHelper();
+                this.renderTasks();
+                this.updateStats();
+                
+                alert('📧 Email task created successfully!');
+            }
+
+            getEmailTypeLabel(type) {
+                const labels = {
+                    proposal: 'Proposal',
+                    meeting: 'Meeting',
+                    followup: 'Follow-up',
+                    thanks: 'Thank You',
+                    apology: 'Apology',
+                    information: 'Information',
+                    confirmation: 'Confirmation',
+                    decline: 'Decline'
+                };
+                return labels[type] || 'Response';
+            }
+
+            getDateString(daysFromNow) {
+                const date = new Date();
+                date.setDate(date.getDate() + daysFromNow);
+                return date.toISOString().split('T')[0];
+            }
+
             // AI機能：タスク分析とAIツール推奨
             analyzeTaskAndRecommend() {
                 const title = document.getElementById('taskTitle').value.trim();
@@ -1288,23 +1810,31 @@ Please provide detailed, actionable insights with clear implementation steps.`
                 return toolPrompts[taskType] || toolPrompts.default;
             }
 
-            // データ共有機能
+            // Enhanced Data Sharing Functions
             exportTasks() {
-                const data = {
+                const exportData = {
                     tasks: this.tasks,
                     clients: this.clients,
-                    exportDate: new Date().toISOString()
+                    exportDate: new Date().toISOString(),
+                    version: '2.0',
+                    statistics: {
+                        totalTasks: this.tasks.length,
+                        completedTasks: this.tasks.filter(t => t.completed).length,
+                        totalClients: this.clients.length
+                    }
                 };
                 
-                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `tasks-export-${new Date().toISOString().split('T')[0]}.json`;
-                a.click();
-                URL.revokeObjectURL(url);
+                const dataStr = JSON.stringify(exportData, null, 2);
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
                 
-                alert('Tasks exported successfully!');
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(dataBlob);
+                link.download = `task-with-ai-export-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                alert('📤 Data exported successfully! File includes tasks, clients, and statistics.');
             }
 
             importTasks() {
@@ -1312,7 +1842,225 @@ Please provide detailed, actionable insights with clear implementation steps.`
             }
 
             generateReport() {
-                alert('Report generation feature coming soon!');
+                const completedTasks = this.tasks.filter(task => task.completed);
+                const pendingTasks = this.tasks.filter(task => !task.completed);
+                const overdueTasks = pendingTasks.filter(task => task.dueDate && new Date(task.dueDate) < new Date());
+                
+                const reportData = {
+                    generatedDate: new Date().toLocaleDateString('en-US', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                    }),
+                    summary: {
+                        totalTasks: this.tasks.length,
+                        completed: completedTasks.length,
+                        pending: pendingTasks.length,
+                        overdue: overdueTasks.length,
+                        completionRate: this.tasks.length > 0 ? Math.round((completedTasks.length / this.tasks.length) * 100) : 0
+                    },
+                    tasks: this.tasks.map(task => ({
+                        title: task.title,
+                        description: task.description || 'No description',
+                        priority: task.priority,
+                        dueDate: task.dueDate || 'No due date',
+                        completed: task.completed,
+                        project: task.project,
+                        client: task.clientId ? this.clients.find(c => c.id === task.clientId)?.company || 'Unknown' : 'No client assigned',
+                        hasFiles: task.files && task.files.length > 0,
+                        fileCount: task.files ? task.files.length : 0
+                    })),
+                    clients: this.clients.map(client => ({
+                        company: client.company,
+                        name: client.name,
+                        position: client.position,
+                        email: client.email,
+                        industry: client.industry,
+                        tasksCount: this.tasks.filter(t => t.clientId === client.id).length,
+                        completedTasksCount: this.tasks.filter(t => t.clientId === client.id && t.completed).length
+                    }))
+                };
+                
+                const reportHtml = this.generateReportHTML(reportData);
+                
+                const reportBlob = new Blob([reportHtml], { type: 'text/html' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(reportBlob);
+                link.download = `task-with-ai-report-${new Date().toISOString().split('T')[0]}.html`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                alert('📊 Professional report generated! Perfect for client presentations.');
+            }
+
+            generateReportHTML(data) {
+                return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TASK with AI - Project Report</title>
+    <style>
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            margin: 20px;
+            background: #ffffff;
+            color: #000000;
+            line-height: 1.6;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: #000000;
+            color: #ffffff;
+        }
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1px;
+            margin-bottom: 40px;
+            background: #e0e0e0;
+        }
+        .summary-card {
+            background: #ffffff;
+            padding: 25px;
+            text-align: center;
+            border: none;
+        }
+        .summary-number {
+            font-size: 2.5em;
+            font-weight: normal;
+            color: #000000;
+            margin-bottom: 10px;
+        }
+        .summary-label {
+            font-size: 0.8em;
+            color: #666666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .section {
+            background: #ffffff;
+            padding: 30px;
+            margin-bottom: 20px;
+            border: 1px solid #e0e0e0;
+        }
+        .section h2 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+        .item {
+            background: #f8f8f8;
+            padding: 15px;
+            margin: 10px 0;
+            border: 1px solid #e0e0e0;
+        }
+        .item-title {
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .item-meta {
+            font-size: 0.8em;
+            color: #666666;
+            margin-top: 5px;
+        }
+        .completed {
+            opacity: 0.6;
+            background: #f0f0f0;
+        }
+        .high-priority {
+            border-left: 3px solid #000000;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            background: #f0f0f0;
+            font-size: 0.8em;
+            color: #666666;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>TASK with AI</h1>
+        <p>Project Report - ${data.generatedDate}</p>
+        <p>Craft with Pride - Professional Task Management</p>
+    </div>
+    
+    <div class="summary">
+        <div class="summary-card">
+            <div class="summary-number">${data.summary.totalTasks}</div>
+            <div class="summary-label">Total Tasks</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-number">${data.summary.completed}</div>
+            <div class="summary-label">Completed</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-number">${data.summary.pending}</div>
+            <div class="summary-label">Pending</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-number">${data.summary.completionRate}%</div>
+            <div class="summary-label">Completion Rate</div>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>📋 Task Overview</h2>
+        ${data.tasks.map(task => `
+            <div class="item ${task.completed ? 'completed' : ''} ${task.priority === 'high' ? 'high-priority' : ''}">
+                <div class="item-title">${task.title}</div>
+                <div>${task.description}</div>
+                <div class="item-meta">
+                    Priority: ${task.priority.toUpperCase()} | 
+                    Due: ${task.dueDate} | 
+                    Project: ${task.project.toUpperCase()} | 
+                    Client: ${task.client} |
+                    Status: ${task.completed ? '✅ COMPLETED' : '⏳ PENDING'}
+                    ${task.hasFiles ? ` | 📎 ${task.fileCount} files attached` : ''}
+                </div>
+            </div>
+        `).join('')}
+    </div>
+    
+    <div class="section">
+        <h2>👥 Client Portfolio</h2>
+        ${data.clients.map(client => `
+            <div class="item">
+                <div class="item-title">${client.company}</div>
+                <div>Contact: ${client.name}${client.position ? ` (${client.position})` : ''}</div>
+                <div class="item-meta">
+                    Industry: ${client.industry} | 
+                    Email: ${client.email} | 
+                    Tasks: ${client.tasksCount} total, ${client.completedTasksCount} completed
+                </div>
+            </div>
+        `).join('')}
+    </div>
+    
+    <div class="footer">
+        <p>Generated by TASK with AI - Professional Task Management System</p>
+        <p>Craft with Pride | NEIGHBORHOOD-inspired design</p>
+    </div>
+</body>
+</html>`;
             }
         }
 
@@ -1386,11 +2134,27 @@ Please provide detailed, actionable insights with clear implementation steps.`
         }
 
         function toggleClientForm() {
-            alert('Client management feature coming soon!');
+            taskManager.toggleClientForm();
         }
 
         function toggleEmailHelper() {
-            alert('Email helper feature coming soon!');
+            taskManager.toggleEmailHelper();
+        }
+
+        function saveClient() {
+            taskManager.saveClient();
+        }
+
+        function generateEmailResponse() {
+            taskManager.generateEmailResponse();
+        }
+
+        function copyEmail() {
+            taskManager.copyEmail();
+        }
+
+        function createTaskFromEmail() {
+            taskManager.createTaskFromEmail();
         }
 
         function exportTasks() {
@@ -1416,16 +2180,54 @@ Please provide detailed, actionable insights with clear implementation steps.`
             const reader = new FileReader();
             reader.onload = (e) => {
                 try {
-                    const data = JSON.parse(e.target.result);
-                    if (data.tasks) {
-                        taskManager.tasks = data.tasks;
-                        taskManager.saveTasks();
-                        taskManager.renderTasks();
-                        taskManager.updateStats();
-                        alert('Tasks imported successfully!');
+                    const importData = JSON.parse(e.target.result);
+                    
+                    if (!importData.tasks && !importData.clients) {
+                        alert('❌ Invalid file format. Please select a valid TASK with AI export file.');
+                        return;
                     }
+                    
+                    const hasExistingData = taskManager.tasks.length > 0 || taskManager.clients.length > 0;
+                    
+                    if (hasExistingData) {
+                        if (confirm('You have existing data. Choose:\n\n✅ OK = Merge with existing data\n❌ Cancel = Replace all existing data')) {
+                            // Merge mode
+                            if (importData.tasks) {
+                                importData.tasks.forEach(task => {
+                                    task.id = Date.now() + Math.random(); // Avoid ID conflicts
+                                    taskManager.tasks.push(task);
+                                });
+                            }
+                            if (importData.clients) {
+                                importData.clients.forEach(client => {
+                                    client.id = Date.now() + Math.random(); // Avoid ID conflicts
+                                    taskManager.clients.push(client);
+                                });
+                            }
+                            alert('📥 Data merged successfully!');
+                        } else {
+                            // Replace mode
+                            if (importData.tasks) taskManager.tasks = importData.tasks;
+                            if (importData.clients) taskManager.clients = importData.clients;
+                            alert('📥 Data imported successfully! All previous data has been replaced.');
+                        }
+                    } else {
+                        // No existing data, just import
+                        if (importData.tasks) taskManager.tasks = importData.tasks;
+                        if (importData.clients) taskManager.clients = importData.clients;
+                        alert('📥 Data imported successfully!');
+                    }
+                    
+                    taskManager.saveTasks();
+                    taskManager.saveClients();
+                    taskManager.renderTasks();
+                    taskManager.renderClients();
+                    taskManager.updateClientDropdowns();
+                    taskManager.updateStats();
+                    
                 } catch (error) {
-                    alert('Invalid file format');
+                    alert('❌ Error reading file. Please make sure it\'s a valid JSON export from TASK with AI.');
+                    console.error('Import error:', error);
                 }
             };
             reader.readAsText(file);
